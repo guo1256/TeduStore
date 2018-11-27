@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+	<!DOCTYPE mapper PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN" 
+		"http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+	<!-- namespace表示命名空间，值必须为接口的名称（包括包名） -->
+	<!-- 实现类没有 ，mybatis框架会生成接口的实现类-->
+	<mapper namespace="cn.tedu.store.mapper.CartMapper">
+		<select id="insertCart"
+		parameterType="cn.tedu.store.bean.Cart">
+		insert into t_cart(
+			uid,goods_id,num,
+			created_user,created_time
+		)values(
+			#{uid},#{goodsId},#{num},
+			#{createdUser},#{createdTime}
+		)
+		</select>
+		
+		<!-- List<CartVo> selectByUid(Integer uid); -->
+		<select id="selectByUid"
+		resultType="cn.tedu.store.vo.CartVo">
+			select 
+				t_cart.id id,uid,goods_id goodsId,t_cart.num num,
+				image,title,price,
+				t_cart.created_user createdUser,t_cart.created_time createdTime,
+				t_cart.modified_user modifiedUser,t_cart.modified_time modifiedTime
+			from
+				t_cart,t_goods
+			where
+				goods_id = t_goods.id
+			and
+				uid=#{uid}
+		</select>
+		
+		<!-- 批量删除 -->
+		<!-- void deleteByIds(Integer[] ids); -->
+		<delete id="deleteByIds">
+			delete from t_cart
+			where id in
+				<!-- 
+				1.collection属性表示定义集合的类型：数组写array
+				2.item表示定义变量
+				3.open表示从xx开始
+				4.close表示以xx结束
+				5.sparator表示分隔符
+				 -->
+				<foreach collection="array" item="id" open="(" separator="," close=")">
+					#{id}
+				</foreach>
+		</delete>
+		
+		<delete id="deleteById">
+			{call del(#{id})}
+		</delete>
+		
+		<update id="updateNum">
+			{call upd(#{pid},#{num})}
+		</update>
+	</mapper>
+	
+	
+	
+	
+	
+	
+	
+	
+	
